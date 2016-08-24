@@ -46,7 +46,7 @@ architecture Behavioral of testbench is
 
     signal clk : std_ulogic := '0';
     signal we : std_ulogic := '0';
-    signal addr : unsigned (7 downto 0) := (others => '0');
+    signal addr : unsigned (7 downto 0);
     signal din : std_ulogic_vector (15 downto 0);
     signal dout : std_ulogic_vector (15 downto 0);
 
@@ -64,10 +64,39 @@ UUT: ram_256x16 port map (
 clock: process begin
     clk <= '0';
     wait for ClockPeriod;
+
     loop
         clk <= not clk;
         wait for (ClockPeriod / 2);
     end loop;
+end process;
+
+stimulus: process begin
+    -- Starting values.
+    addr <= TO_UNSIGNED(0, addr'length);
+    we <= '0';
+    wait until falling_edge(clk);
+
+    -- Write to address 1.
+    addr <= TO_UNSIGNED(1, addr'length);
+    din <= x"ABCD";
+    we <= '1';
+    wait until falling_edge(clk);
+
+    -- Do nothing for a tick.
+    we <= '0';
+    wait until falling_edge(clk);
+
+    -- Write to address 1.
+    we <= '1';
+    addr <= TO_UNSIGNED(2, addr'length);
+    din <= x"FACE";
+    wait until falling_edge(clk);
+
+    -- Do nothing more.
+    we <= '0';
+    din <= x"0000";
+    wait;
 end process;
 
 end Behavioral;

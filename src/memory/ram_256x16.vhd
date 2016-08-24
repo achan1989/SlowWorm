@@ -52,9 +52,9 @@ begin
         if (we = '1') then
             RAM(TO_INTEGER(addr)) <= din;
         end if;
-
-        dout <= RAM(TO_INTEGER(addr));
     end if;
 end process;
+
+dout <= RAM(TO_INTEGER(addr));
 
 end Behavioral;

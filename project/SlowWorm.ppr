@@ -3,7 +3,7 @@
 <Project Version="4" Minor="36">
 	<FileSet Dir="sources_1" File="fileset.xml"/>
 	<FileSet Dir="constrs_1" File="fileset.xml"/>
-	<FileSet Dir="sim_1" File="fileset.xml"/>
+	<FileSet Dir="ram_256x16" File="fileset.xml"/>
 	<DefaultLaunch Dir="$PRUNDIR"/>
 	<DefaultPromote Dir="$PROMOTEDIR"/>
 	<Config>
@@ -14,7 +14,7 @@
 		<Option Name="TargetSimulator" Val="ISim"/>
 		<Option Name="Board" Val=""/>
 		<Option Name="SourceMgmtMode" Val="All"/>
-		<Option Name="ActiveSimSet" Val="sim_1"/>
+		<Option Name="ActiveSimSet" Val="ram_256x16"/>
 		<Option Name="CxlOverwriteLibs" Val="1"/>
 		<Option Name="CxlFuncsim" Val="1"/>
 		<Option Name="CxlTimesim" Val="1"/>

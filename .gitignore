@@ -27,6 +27,9 @@
 # Crap
 **/SlowWorm.data/wt/
 
+# Simulation stuff
+**/SlowWorm.sim/
+
 
 #===============================================================================
 # ISE stuff

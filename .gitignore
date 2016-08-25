@@ -24,11 +24,16 @@
 *.log
 *.jou
 
-# Crap
+# Webtalk crap
 **/SlowWorm.data/wt/
 
 # Simulation stuff
 **/SlowWorm.sim/
+
+# Synthesis stuff.
+**/SlowWorm.runs/
+**/SlowWorm.data/runs/
+**/.Xil/
 
 
 #===============================================================================

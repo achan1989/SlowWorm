@@ -78,23 +78,39 @@ stimulus: process begin
     wait until falling_edge(clk);
 
     -- Write to address 1.
+    wait until rising_edge(clk);
     addr <= TO_UNSIGNED(1, addr'length);
     din <= x"ABCD";
     we <= '1';
-    wait until falling_edge(clk);
 
-    -- Do nothing for a tick.
-    we <= '0';
-    wait until falling_edge(clk);
-
-    -- Write to address 1.
+    -- Write to address 2.
+    wait until rising_edge(clk);
     we <= '1';
     addr <= TO_UNSIGNED(2, addr'length);
     din <= x"FACE";
-    wait until falling_edge(clk);
+
+    -- Do nothing for 3 ticks.
+    wait until rising_edge(clk);
+    we <= '0';
+    addr <= TO_UNSIGNED(10, addr'length);
+    din <= x"0000";
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
+
+    -- Read address 1.
+    wait until rising_edge(clk);
+    addr <= TO_UNSIGNED(1, addr'length);
+    we <= '0';
+
+    -- Read address 2.
+    wait until rising_edge(clk);
+    addr <= TO_UNSIGNED(2, addr'length);
+    we <= '0';
 
     -- Do nothing more.
+    wait until rising_edge(clk);
     we <= '0';
+    addr <= TO_UNSIGNED(10, addr'length);
     din <= x"0000";
     wait;
 end process;

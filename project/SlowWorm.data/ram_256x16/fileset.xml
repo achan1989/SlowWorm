@@ -17,7 +17,7 @@
     <Config>
       <Option Name="DesignMode" Val="RTL"/>
       <Option Name="TopModule" Val="testbench"/>
-      <Option Name="SimulationRunTime" Val="400ns"/>
+      <Option Name="SimulationRunTime" Val="600ns"/>
       <Option Name="SrcSet" Val=""/>
     </Config>
   </FileSet>

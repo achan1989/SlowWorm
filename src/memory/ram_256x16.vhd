@@ -46,7 +46,7 @@ architecture Behavioral of ram_256x16 is
     signal RAM : ram_type;
 begin
 
-process (clk)
+write: process (clk)
 begin
     if (rising_edge(clk)) then
         if (we = '1') then

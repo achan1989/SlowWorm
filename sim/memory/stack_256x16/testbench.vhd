@@ -51,7 +51,7 @@ architecture Behavioral of testbench is
     constant ClockPeriod : TIME := 50 ns;
 begin
 
-UUT: stack_256x16 port map (
+Stack: stack_256x16 port map (
     push => push,
     pop => pop,
     dout => dout,

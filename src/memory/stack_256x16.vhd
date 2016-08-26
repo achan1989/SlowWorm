@@ -54,6 +54,8 @@ architecture Behavioral of stack_256x16 is
 
     -- Address we're using for the RAM.
     signal addr : unsigned (7 downto 0) := (others => '0');
+    -- Registered data when writing to RAM.
+    signal din_r : std_ulogic_vector (15 downto 0);
     -- Address of the free space at the top of the stack.
     signal top : unsigned (7 downto 0) := (others => '0');
     signal we : std_ulogic;
@@ -62,7 +64,7 @@ begin
 
 RAM: ram_256x16 port map (
     dout => dout,
-    din => din,
+    din => din_r,
     addr => addr,
     we => we,
     clk => clk
@@ -85,7 +87,7 @@ op <= OpPush when (push = '1' and pop = '0') else
 --    end if;
 --end process;
 
-process (clk)
+main: process (clk)
 begin
     if (rising_edge(clk)) then
         case op is
@@ -95,6 +97,7 @@ begin
             when OpPush =>
                 addr <= top;
                 top <= top + 1;
+                din_r <= din;
                 we <= '1';
 
             when OpPop =>

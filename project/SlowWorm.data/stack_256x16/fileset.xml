@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DARoots Version="1" Minor="26">
+  <FileSet Name="stack_256x16" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/stack_256x16">
+    <Filter Type="Srcs"/>
+    <File Path="$PPRDIR/../src/memory/ram_256x16.vhd">
+      <FileInfo>
+        <Attr Name="UsedInSynthesis" Val="1"/>
+        <Attr Name="UsedInSimulation" Val="1"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/../src/memory/stack_256x16.vhd">
+      <FileInfo>
+        <Attr Name="UsedInSynthesis" Val="1"/>
+        <Attr Name="UsedInSimulation" Val="1"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/../sim/memory/stack_256x16/testbench.vhd">
+      <FileInfo>
+        <Attr Name="UsedInSynthesis" Val="0"/>
+        <Attr Name="UsedInSimulation" Val="1"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="testbench"/>
+      <Option Name="SrcSet" Val=""/>
+    </Config>
+  </FileSet>
+</DARoots>

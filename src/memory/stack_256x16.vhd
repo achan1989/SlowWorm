@@ -50,7 +50,14 @@ architecture Behavioral of stack_256x16 is
         clk : in std_ulogic);
     end component;
 
-    signal addr : unsigned (7 downto 0);
+    type operation is (OpNone, OpPush, OpPop);
+
+    -- Address we're using for the RAM.
+    signal addr : unsigned (7 downto 0) := (others => '0');
+    -- Address of the free space at the top of the stack.
+    signal top : unsigned (7 downto 0) := (others => '0');
+    signal we : std_ulogic;
+    signal op : operation;
 begin
 
 RAM: ram_256x16 port map (
@@ -61,19 +68,40 @@ RAM: ram_256x16 port map (
     clk => clk
     );
 
+op <= OpPush when (push = '1' and pop = '0') else
+      OpPop when (push = '0' and pop = '1') else
+      OpNone;
+
+--process (clk)
+--begin
+--    if (rising_edge(clk)) then
+--        if (push = '1' and pop = '0') then
+--            op <= OpPush;
+--        elsif (push = '0' and pop = '1') then
+--            op <= OpPop;
+--        else
+--            op <= OpNone;
+--        end if;
+--    end if;
+--end process;
+
 process (clk)
 begin
     if (rising_edge(clk)) then
-        -- Default do-nothing, applies unless only one operation is selected.
-        we <= '0';
+        case op is
+            when OpNone =>
+                we <= '0';
 
-        -- Push.
-        if (push and not pop) then
-        end if;
+            when OpPush =>
+                addr <= top;
+                top <= top + 1;
+                we <= '1';
 
-        -- Pop.
-        if (pop and not push) then
-        end if;
+            when OpPop =>
+                addr <= top - 1;
+                top <= top - 1;
+                we <= '0';
+        end case;
     end if;
 end process;
 

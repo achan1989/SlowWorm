@@ -14,7 +14,7 @@
 		<Option Name="TargetLanguage" Val="VHDL"/>
 		<Option Name="TargetSimulator" Val="ISim"/>
 		<Option Name="Board" Val=""/>
-		<Option Name="SourceMgmtMode" Val="All"/>
+		<Option Name="SourceMgmtMode" Val="DisplayOnly"/>
 		<Option Name="ActiveSimSet" Val="ram_256x16"/>
 		<Option Name="CxlOverwriteLibs" Val="1"/>
 		<Option Name="CxlFuncsim" Val="1"/>

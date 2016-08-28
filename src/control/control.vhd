@@ -29,8 +29,14 @@ use SlowWorm.SlowWorm.ALL;
 entity control is
     Port (
         clk : in std_ulogic;
+        -- Instruction memory.
         inst_mem_data : in data_t;
         inst_mem_addr : out addr_t;
+        -- Data memory.
+        data_mem_data_read : in data_t;
+        data_mem_data_write : out data_t;
+        data_mem_addr : out addr_t;
+        data_mem_we : out std_ulogic;
         -- Data stack.
         dstack_data_read : in data_t;
         dstack_data_write : out data_t;

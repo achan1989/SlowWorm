@@ -29,16 +29,16 @@ use SlowWorm.SlowWorm.ALL;
 entity control is
     Port (
         clk : in std_ulogic;
-        inst_mem : in data_t;
-        inst_addr : out addr_t;
+        inst_mem_data : in data_t;
+        inst_mem_addr : out addr_t;
         -- Data stack.
-        dstack_data_in : in data_t;
-        dstack_data_out : out data_t;
+        dstack_data_read : in data_t;
+        dstack_data_write : out data_t;
         dstack_push : out std_ulogic;
         dstack_pop : out std_ulogic;
         -- Return stack.
-        rstack_data_in : in data_t;
-        rstack_data_out : out data_t;
+        rstack_data_read : in data_t;
+        rstack_data_write : out data_t;
         rstack_push : out std_ulogic;
         rstack_pop : out std_ulogic
         );
@@ -49,7 +49,7 @@ architecture Behavioral of control is
     type state_t is (Reset, Fetch, Decode, Execute, Halt);
 
     signal state : state_t := Reset;
-    signal inst_addr, data_addr, pc : addr_t;
+    signal data_addr, pc : addr_t;
     signal instruction : data_t;
 
     -- Clear any control signals that cause a change of state in other modules.
@@ -66,19 +66,19 @@ reset: process (clk) begin
     if rising_edge(clk) and state = Reset then
         clear_controls;
         pc <= TO_UNSIGNED(0, pc'length);
-        inst_addr <= TO_UNSIGNED(0, inst_addr'length);
+        inst_mem_addr <= TO_UNSIGNED(0, inst_mem_addr'length);
         state <= Fetch;
     end if;
 end process;
 
 -- Preconditions:
--- `inst_mem` is loaded with the correct instruction memory address.
+-- `inst_mem_addr` is loaded with the correct instruction memory address.
 -- Postconditions:
 -- `instruction` contains the next instruction to decode.
 fetch: process (clk) begin
     if rising_edge(clk) and state = Fetch then
         clear_controls;
-        instruction <= inst_mem;
+        instruction <= inst_mem_data;
         pc <= pc + 1;
         state <= Decode;
     end if;
@@ -101,9 +101,9 @@ begin
 
         if is_call then
             rstack_push <= '1';
-            rstack_data_out <= pc;
+            rstack_data_write <= pc;
             pc <= call_address;
-            inst_addr <= call_address;
+            inst_mem_addr <= call_address;
             state <= Fetch;
         elsif is_uop then
             todo;
@@ -118,7 +118,7 @@ end process;
 execute: process (clk) begin
     if rising_edge(clk) and state = Execute then
         clear_controls;
-        inst_addr <= pc;
+        inst_mem_addr <= pc;
         state <= Fetch;
         todo;
     end if;

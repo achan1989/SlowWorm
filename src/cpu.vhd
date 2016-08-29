@@ -40,8 +40,6 @@ end cpu;
 
 
 architecture Behavioral of cpu is
-    signal clk : std_ulogic;
-
     signal rstack_push : std_ulogic;
     signal rstack_pop : std_ulogic;
     signal rstack_data_read : data_t;

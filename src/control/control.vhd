@@ -57,79 +57,68 @@ architecture Behavioral of control is
     signal state : state_t := Reset;
     signal data_addr, pc : addr_t;
     signal instruction : data_t;
-
-    -- Clear any control signals that cause a change of state in other modules.
-    procedure clear_controls (
-        signal dstack_push, dstack_pop,
-        rstack_push, rstack_pop : out std_ulogic) is
-    begin
-        dstack_push <= '0';
-        dstack_pop <= '0';
-        rstack_push <= '0';
-        rstack_pop <= '0';
-    end procedure clear_controls;
 begin
 
 
-reset_proc: process (clk) begin
-    if rising_edge(clk) and state = Reset then
-        clear_controls(dstack_push, dstack_pop, rstack_push, rstack_pop);
-        pc <= TO_UNSIGNED(0, pc'length);
-        inst_mem_addr <= TO_UNSIGNED(0, inst_mem_addr'length);
-        state <= Fetch;
-    end if;
-end process;
-
--- Preconditions:
--- `inst_mem_addr` is loaded with the correct instruction memory address.
--- Postconditions:
--- `instruction` contains the next instruction to decode.
-fetch_proc: process (clk) begin
-    if rising_edge(clk) and state = Fetch then
-        clear_controls(dstack_push, dstack_pop, rstack_push, rstack_pop);
-        instruction <= inst_mem_data;
-        pc <= pc + 1;
-        state <= Decode;
-    end if;
-end process;
-
-decode_proc: process (clk) is
+main: process (clk) is
     alias uop_bit : std_ulogic is instruction(15);
     -- TODO: other bit aliases.
     alias call_bit : std_ulogic is instruction(0);
 
     constant call_address : addr_t := DATA_TO_ADDR(instruction(15 downto 0));
 
-    variable is_call : boolean := (call_bit = '0');
-    variable is_uop : boolean := (uop_bit = '1');
-    variable is_direct : boolean := (call_bit = '1' and uop_bit = '0');
+    constant is_call : boolean := (call_bit = '0');
+    constant is_uop : boolean := (uop_bit = '1');
+    constant is_direct : boolean := (call_bit = '1' and uop_bit = '0');
 begin
-    if rising_edge(clk) and state = Decode then
-        clear_controls(dstack_push, dstack_pop, rstack_push, rstack_pop);
-        state <= Execute;
+    if rising_edge(clk) then
+        -- Clear any control signals that cause a change of state in other modules.
+        dstack_push <= '0';
+        dstack_pop <= '0';
+        rstack_push <= '0';
+        rstack_pop <= '0';
 
-        if is_call then
-            rstack_push <= '1';
-            rstack_data_write <= ADDR_TO_DATA(pc);
-            pc <= call_address;
-            inst_mem_addr <= call_address;
-            state <= Fetch;
-        elsif is_uop then
-            null; --TODO
-        elsif is_direct then
-            null; --TODO
-        else -- something fucky has happened.
-            state <= Halt;
-        end if;
-    end if;
-end process;
+        case state is
+            when Reset =>
+                pc <= TO_UNSIGNED(0, pc'length);
+                inst_mem_addr <= TO_UNSIGNED(0, inst_mem_addr'length);
+                state <= Fetch;
 
-execute_proc: process (clk) begin
-    if rising_edge(clk) and state = Execute then
-        clear_controls(dstack_push, dstack_pop, rstack_push, rstack_pop);
-        inst_mem_addr <= pc;
-        state <= Fetch;
-        null; --TODO
+            -- Preconditions:
+            -- `inst_mem_addr` is loaded with the correct instruction memory address.
+            -- Postconditions:
+            -- `instruction` contains the next instruction to decode.
+            when Fetch =>
+                instruction <= inst_mem_data;
+                pc <= pc + 1;
+                state <= Decode;
+
+            when Decode =>
+                if is_call then
+                    rstack_push <= '1';
+                    rstack_data_write <= ADDR_TO_DATA(pc);
+                    pc <= call_address;
+                    inst_mem_addr <= call_address;
+                    state <= Fetch;
+                elsif is_uop then
+                    --TODO.
+                    state <= Halt;
+                elsif is_direct then
+                    --TODO.  For now this is basically a no-op.
+                    state <= Execute;
+                else -- something fucky has happened.
+                    state <= Halt;
+                end if;
+
+            when Execute =>
+                inst_mem_addr <= pc;
+                state <= Fetch;
+                null; --TODO
+
+            when Halt =>
+                null;
+
+        end case;
     end if;
 end process;
 

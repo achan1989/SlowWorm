@@ -65,11 +65,11 @@ main: process (clk) is
     -- TODO: other bit aliases.
     alias call_bit : std_ulogic is instruction(0);
 
-    constant call_address : addr_t := DATA_TO_ADDR(instruction(15 downto 0));
-
-    constant is_call : boolean := (call_bit = '0');
-    constant is_uop : boolean := (uop_bit = '1');
-    constant is_direct : boolean := (call_bit = '1' and uop_bit = '0');
+    -- Variables used in decode state.
+    variable call_address : addr_t;
+    variable is_call : boolean;
+    variable is_uop : boolean;
+    variable is_direct : boolean;
 begin
     if rising_edge(clk) then
         -- Clear any control signals that cause a change of state in other modules.
@@ -77,6 +77,7 @@ begin
         dstack_pop <= '0';
         rstack_push <= '0';
         rstack_pop <= '0';
+        data_mem_we <= '0';
 
         case state is
             when Reset =>
@@ -94,6 +95,11 @@ begin
                 state <= Decode;
 
             when Decode =>
+                call_address := DATA_TO_ADDR(instruction(15 downto 0));
+                is_call := (call_bit = '0');
+                is_uop := (uop_bit = '1');
+                is_direct := (call_bit = '1' and uop_bit = '0');
+
                 if is_call then
                     rstack_push <= '1';
                     rstack_data_write <= ADDR_TO_DATA(pc);

@@ -5,6 +5,7 @@
 	<FileSet Dir="constrs_1" File="fileset.xml"/>
 	<FileSet Dir="ram_256x16" File="fileset.xml"/>
 	<FileSet Dir="stack_256x16" File="fileset.xml"/>
+	<FileSet Dir="cpu_control" File="fileset.xml"/>
 	<DefaultLaunch Dir="$PRUNDIR"/>
 	<DefaultPromote Dir="$PROMOTEDIR"/>
 	<Config>

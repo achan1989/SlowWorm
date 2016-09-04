@@ -5,7 +5,7 @@ There are a few high-level groups of instruction formats.  The following list sh
 * Microcoded Instructions `[111]`
 * Directly Encoded Instructions
   * Subroutine Call `[--0]`
-  * Push Immediate `[001]`.  Push a small constant onto the (data? or either?) stack.
+  * Immediate Value `[001]`.  Do something with a small constant.
   * Logic `[011]`.  Perform operations with the ALU.
   * Control `[101]`.  Conditional jumps, returns, etc.
 

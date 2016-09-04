@@ -53,23 +53,26 @@ end control;
 
 architecture Behavioral of control is
     type state_t is (Reset, Fetch, Decode, Execute, Halt);
+    subtype instr_type_t is std_ulogic_vector(2 downto 0);
 
     signal state : state_t := Reset;
     signal data_addr, pc : addr_t;
     signal instruction : data_t;
+
+    constant INSTR_TYPE_IMM_VAL : instr_type_t := "001";
+    constant INSTR_TYPE_LOGIC : instr_type_t := "011";
+    constant INSTR_TYPE_CONTROL : instr_type_t := "101";
+    constant INSTR_TYPE_UCODE : instr_type_t := "111";
 begin
 
 
 main: process (clk) is
-    alias uop_bit : std_ulogic is instruction(15);
-    -- TODO: other bit aliases.
     alias call_bit : std_ulogic is instruction(0);
+    alias instr_type : instr_type_t is instruction(2 downto 0);
 
     -- Variables used in decode state.
     variable call_address : addr_t;
     variable is_call : boolean;
-    variable is_uop : boolean;
-    variable is_direct : boolean;
 begin
     if rising_edge(clk) then
         -- Clear any control signals that cause a change of state in other modules.
@@ -97,8 +100,6 @@ begin
             when Decode =>
                 call_address := DATA_TO_ADDR(instruction(15 downto 0));
                 is_call := (call_bit = '0');
-                is_uop := (uop_bit = '1');
-                is_direct := (call_bit = '1' and uop_bit = '0');
 
                 if is_call then
                     rstack_push <= '1';
@@ -106,14 +107,28 @@ begin
                     pc <= call_address;
                     inst_mem_addr <= call_address;
                     state <= Fetch;
-                elsif is_uop then
-                    --TODO.
-                    state <= Halt;
-                elsif is_direct then
-                    --TODO.  For now this is basically a no-op.
-                    state <= Execute;
-                else -- something fucky has happened.
-                    state <= Halt;
+                else
+                    case instr_type is
+                        when INSTR_TYPE_IMM_VAL =>
+                            --TODO.  For now this is basically a no-op.
+                            state <= Execute;
+
+                        when INSTR_TYPE_LOGIC =>
+                            --TODO.  For now this is basically a no-op.
+                            state <= Execute;
+
+                        when INSTR_TYPE_CONTROL =>
+                            --TODO.  For now this is basically a no-op.
+                            state <= Execute;
+
+                        when INSTR_TYPE_UCODE =>
+                            --TODO.
+                            state <= Halt;
+
+                        when others =>
+                            -- something fucky has happened.
+                            state <= Halt;
+                    end case;
                 end if;
 
             when Execute =>

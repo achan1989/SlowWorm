@@ -17,7 +17,7 @@ There are a few high-level groups of instruction formats.  The following list sh
 
 ## Subroutine Call
 
-Subroutines must start at an even address (LSB == 0).
+Subroutines **must** start at an even address (LSB is 0).
 
 | 15 - 1 | 0 |
 | :---: | --- |
@@ -43,3 +43,10 @@ A 12-bit two's complement `value` (-2048 to 2047) is sign-extended and pushed to
 | :---: | :---: |
 | 0 | data |
 | 1 | return |
+
+Specifically, these operations take place:
+* `value` is sign-extended to 16 bits.
+* The extended value is placed on the appropriate stack's write bus.
+* The appropriate stack's push signal is set high.
+* The value of the program counter is put on the instruction memory address bus.
+* The next state is set to `Fetch`.

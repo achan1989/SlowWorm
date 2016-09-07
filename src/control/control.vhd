@@ -67,12 +67,17 @@ begin
 
 
 main: process (clk) is
+    -- General stuff used in decode state.
     alias call_bit : std_ulogic is instruction(0);
     alias instr_type : instr_type_t is instruction(2 downto 0);
-
-    -- Variables used in decode state.
     variable call_address : addr_t;
     variable is_call : boolean;
+    -- Used for Immediate Value instructions.
+    alias imm_stack : std_ulogic is instruction(3);
+    constant DATA_STACK : std_ulogic := '0';
+    alias imm_val : std_ulogic_vector(11 downto 0) is instruction(15 downto 4);
+    alias imm_sign_bit : std_ulogic is instruction(instruction'left);
+    variable imm_val_extended : data_t;
 begin
     if rising_edge(clk) then
         -- Clear any control signals that cause a change of state in other modules.
@@ -110,8 +115,19 @@ begin
                 else
                     case instr_type is
                         when INSTR_TYPE_IMM_VAL =>
-                            --TODO.  For now this is basically a no-op.
-                            state <= Execute;
+                            imm_val_extended(imm_val'range) := imm_val;
+                            imm_val_extended(imm_val_extended'left downto (imm_val'left + 1)) := (imm_val_extended'left downto (imm_val'left + 1) => imm_sign_bit);
+
+                            if imm_stack = DATA_STACK then
+                                dstack_push <= '1';
+                                dstack_data_write <= imm_val_extended;
+                            else
+                                rstack_push <= '1';
+                                rstack_data_write <= imm_val_extended;
+                            end if;
+
+                            inst_mem_addr <= pc;
+                            state <= Fetch;
 
                         when INSTR_TYPE_LOGIC =>
                             --TODO.  For now this is basically a no-op.

@@ -11,11 +11,35 @@ There are a few high-level groups of instruction formats.  The following list sh
 
 ## Microcoded Instruction
 
-Bits `[2..0]` are `[111]`.
-The rest of the instruction denotes the microcode operation to be performed.
+| 15 - 3 | 2 | 1 | 0 |
+| :---: | --- | --- | --- |
+| `operation` | 1 | 1 | 1 |
 
 ## Subroutine Call
 
 Subroutines must start at an even address (LSB == 0).
 
+| 15 - 1 | 0 |
+| :---: | --- |
+| `subroutine address` (15 downto 1) | 0 |
+
 A subroutine call is made by giving the address of the subroutine as the instruction.  The zero in the LSB of the instruction denotes the subroutine call.
+
+The following operations take place:
+* The value of the program counter is pushed to the return stack.
+* The program counter is set to the subroutine address encoded in the instruction.
+* The subroutine address is put on the instruction memory address bus.
+* The next state is set to `Fetch`.
+
+## Immediate Value
+
+| 15 - 4 | 3 | 2 | 1 | 0 |
+| :---: | :---: | --- | --- | --- |
+| `value` | `stack` | 0 | 0 | 1 |
+
+A 12-bit two's complement `value` (-2048 to 2047) is sign-extended and pushed to the selected `stack`.
+
+| `stack` bit | selects |
+| :---: | :---: |
+| 0 | data |
+| 1 | return |

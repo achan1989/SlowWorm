@@ -6,7 +6,7 @@ There are a few high-level groups of instruction formats.  The following list sh
 * Directly Encoded Instructions
   * Subroutine Call `[--0]`
   * Immediate Value `[001]`.  Do something with a small constant.
-  * Logic `[011]`.  Perform operations with the ALU.
+  * ALU `[011]`.  Perform operations with the ALU.
   * Control `[101]`.  Conditional jumps, returns, etc.
 
 ## Microcoded Instruction
@@ -51,13 +51,13 @@ Specifically, these operations take place:
 * The value of the program counter is put on the instruction memory address bus.
 * The next state is set to `Fetch`.
 
-## Logic
+## ALU
 
 | 15 | 14 | 4 - 13 | 7 - 3 | 2 | 1 | 0 |
 | :---: | :---: | :---: | :---: | --- | --- | --- |
 | `stack` | `pop` | - | `operation` | 0 | 1 | 1 |
 
-Performs arithmetic or logic operations on the top element(s) of the selected `stack`, and pushes the result onto the `stack`.
+Performs an arithmetic or logic operation on the top element(s) of the selected `stack`, and pushes the result onto the `stack`.
 Can optionally `pop` the top element off the stack before the result is pushed.
 
 In the following descriptions, `A` refers to the top element in the stack and `B` refers to the second element.

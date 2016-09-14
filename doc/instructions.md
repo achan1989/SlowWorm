@@ -60,6 +60,16 @@ Specifically, these operations take place:
 Performs an arithmetic or logic operation on the top element(s) of the selected `stack`, and pushes the result onto the `stack`.
 Can optionally `pop` the top element off the stack before the result is pushed.
 
+| `stack` bit | selects |
+| :---: | :---: |
+| 0 | data |
+| 1 | return |
+
+| `pop` bit | action |
+| :---: | :---: |
+| 0 | none |
+| 1 | stack is popped |
+
 In the following descriptions, `A` refers to the top element in the stack and `B` refers to the second element.
 
 Logic operations are as follows:
